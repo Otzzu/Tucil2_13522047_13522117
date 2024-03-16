@@ -1,10 +1,12 @@
 from matplotlib.animation import FuncAnimation
+import timeit
 
 class BezierCurve:
     def __init__(self, control_points, num_iterate):
         self.control_points = control_points
         self.num_iterate = num_iterate
         self.bezier_points = []
+        self.time_execution = 0
 
     def mid_point(self, point1, point2):
         mid_x = (point1[0] + point2[0]) / 2
@@ -34,9 +36,12 @@ class BezierCurve:
              
     #0,0;1,8;5,0;8,10;14,0;20,15;25,20;35,30;20,4;10,0
     def calc(self):
+        start_time = timeit.default_timer()
         self.bezier_points.append(self.control_points[0])
         self.calculate_bezier_points(self.control_points, 0)
         self.bezier_points.append(self.control_points[-1])
+        end_time = timeit.default_timer()
+        self.time_execution = end_time - start_time
     
     def draw_animate(self, fig, ax):
         ctrl_x, ctrl_y = zip(*self.control_points)
@@ -46,8 +51,11 @@ class BezierCurve:
         line, = ax.plot(x, y, 'bo-', label='Bezier Curve', ms=3.5)
         ax.plot(ctrl_x, ctrl_y, 'ro-', label='Control Points')
         
-        ax.set_xlim(min(ctrl_x) - min(ctrl_x) // 10, max(ctrl_x) + max(ctrl_x) // 10)
-        ax.set_ylim(min(ctrl_y) - min(ctrl_y) // 10, max(ctrl_y) + max(ctrl_y) // 10)
+        delta_x = max(ctrl_x) // 10 if max(ctrl_x) != 0 else min(ctrl_x) // 10
+        delta_y = max(ctrl_y) // 10 if max(ctrl_y) != 0 else min(ctrl_y) // 10
+        
+        ax.set_xlim(min(ctrl_x) - delta_x if delta_x != 0 else 5, max(ctrl_x) + delta_x if delta_x != 0 else 5)
+        ax.set_ylim(min(ctrl_y) - delta_y if delta_y != 0 else 5, max(ctrl_y) + delta_y if delta_y != 0 else 5)
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_title('Bezier Curve Animation')
@@ -88,13 +96,13 @@ class BezierCurve:
     
         ax.plot(x, y, 'bo-', label='Bezier Curve', ms = 3.5)
         ax.plot(ctrl_x, ctrl_y, 'ro-', label='Control Points')        
-
-        # for i in range(len(self.bezier_points)):
-        #     ax.plot([self.bezier_points[i][0]], [self.bezier_points[i][1]], 'go', ms=3.5)
     
     
-        ax.set_xlim(min(ctrl_x) - min(ctrl_x) // 10, max(ctrl_x) + max(ctrl_x) // 10)
-        ax.set_ylim(min(ctrl_y) - min(ctrl_y) // 10, max(ctrl_y) + max(ctrl_y) // 10)
+        delta_x = max(ctrl_x) // 10 if max(ctrl_x) != 0 else min(ctrl_x) // 10
+        delta_y = max(ctrl_y) // 10 if max(ctrl_y) != 0 else min(ctrl_y) // 10
+        
+        ax.set_xlim(min(ctrl_x) - delta_x if delta_x != 0 else 5, max(ctrl_x) + delta_x if delta_x != 0 else 5)
+        ax.set_ylim(min(ctrl_y) - delta_y if delta_y != 0 else 5, max(ctrl_y) + delta_y if delta_y != 0 else 5)
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_title('Bezier Curve')

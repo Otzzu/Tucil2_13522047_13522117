@@ -1,10 +1,12 @@
 from matplotlib.animation import FuncAnimation
+import timeit
 
 class BezierCurve:
     def __init__(self, control_points, num_iterate):
         self.control_points = control_points
         self.num_iterate = num_iterate
         self.bezier_points = []
+        self.time_execution = 0
 
     def midPoint(self,point1, point2):
         mid_x = (point1[0] + point2[0]) / 2
@@ -25,9 +27,12 @@ class BezierCurve:
             self.calculate_bezier_points(midPoint3, midPoint2, point3, currIterations)
     
     def calc(self):
+        start_time = timeit.default_timer()
         self.bezier_points.append(self.control_points[0])
         self.calculate_bezier_points(self.control_points[0], self.control_points[1], self.control_points[2], 0)
         self.bezier_points.append(self.control_points[2])
+        end_time = timeit.default_timer()
+        self.time_execution = end_time - start_time
     
     def draw_animate(self, fig, ax):
         ctrl_x, ctrl_y = zip(*self.control_points)
