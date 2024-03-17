@@ -32,7 +32,7 @@ def draw_bezier_curve_bruteforce(control_points, num_iterate, canvas, canvas2, f
     bezier_curve = BezierCurveN(control_points, num_iterate)
     bezier_curve.calc_bruteforce()
 
-    anim = bezier_curve.draw_animate(figure, ax)
+    anim = bezier_curve.draw_animate_bruteforce(figure, ax)
     bezier_curve.draw(ax2)
     canvas.draw()
     canvas2.draw()
@@ -125,7 +125,7 @@ def main():
             return
         global anim, canvas, canvas2
         anim, canvas, canvas2, bezier_curve = draw_bezier_curve_dnc(control_points, num_iterate, canvas, canvas2, figure, ax, anim, ax2)
-        execution_time_label.config(text=f"Time Execution DnC: {bezier_curve.time_execution:.5f} seconds")
+        execution_time_label.config(text=f"Time Execution DnC: {bezier_curve.time_execution:.8f} seconds")
     
     def handle_draw_bruteforce():
         control_points, is_control_points_valid = parse_and_validate_control_points(control_points_var)
@@ -138,7 +138,7 @@ def main():
             return
         global anim, canvas, canvas2
         anim, canvas, canvas2, bezier_curve = draw_bezier_curve_bruteforce(control_points, num_iterate, canvas, canvas2, figure, ax, anim, ax2)
-        execution_time_label.config(text=f"Time Execution Bruteforce: {bezier_curve.time_execution:.5f} seconds")
+        execution_time_label.config(text=f"Time Execution Bruteforce: {bezier_curve.time_execution:.8f} seconds")
 
     def clear_all():
         control_points_var.set("")

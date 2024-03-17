@@ -8,6 +8,8 @@ class BezierCurveN:
         self.bezier_points = []
         self.time_execution = 0
         self.num_points = 0
+        self.data_bruteforce=[]
+        self.data_dnc = [[] for _ in range(5)]
 
     def mid_point(self, point1, point2):
         mid_x = (point1[0] + point2[0]) / 2
@@ -30,6 +32,9 @@ class BezierCurveN:
             left = [all[i][0] for i in range(len(all))]
             right = [all[len(all) - i - 1][-1] for i in range(len(all))]
             
+            if current_iteration + 1 < 5:
+                self.data_dnc[current_iteration + 1].append(all)
+            
             
             self.calculate_bezier_points_dnc(left, current_iteration + 1)
             self.bezier_points.append(all[-1][0])
@@ -46,8 +51,11 @@ class BezierCurveN:
         
     def count_points(self):
         count=3
-        for i in range (1,self.num_iterate):
+        for _ in range (1,self.num_iterate):
             count= count*2-1
+        
+        if self.num_iterate == 0:
+            count = 2
         
         return count
 
@@ -67,6 +75,7 @@ class BezierCurveN:
                 
                 data.append(value)
             curve_points.append(data[-1][0])
+            self.data_bruteforce.append(data)
             
         self.bezier_points = curve_points.copy()
 
@@ -83,7 +92,7 @@ class BezierCurveN:
         
         x, y = zip(*[self.control_points[0], self.control_points[-1]])
 
-        line, = ax.plot(x, y, 'bo-', label='Bezier Curve', ms=3.5)
+        line, = ax.plot(x, y, 'bo-', label='Bezier Curve', ms=3)
         ax.plot(ctrl_x, ctrl_y, 'ro-', label='Control Points')
         
         delta_x = abs(max(ctrl_x) // 10) if max(ctrl_x) != 0 else min(ctrl_x) // 10
@@ -117,19 +126,86 @@ class BezierCurveN:
             
             line.set_data(new_x, new_y)
             
-            return [line]
+            new_line = []
+            
+            if i > 0 and i < 5:
+                for j in range(1,i+1):
+                    data2 = self.data_dnc[j]
+                    if len(data2) > 1:
+                        for k in range(1,len(data2[0]) - 1):
+                            data3 = data2[0][k]
+                            data4 = data2[1][k]
+                            xh, yh = zip(*data3)
+                            xhh, yhh = zip(*data4)
+                            line_h, = ax.plot(xh, yh, 'go--', ms=3)
+                            line_hh, = ax.plot(xhh, yhh, 'go--', ms=3)
+                            new_line.extend([line_h, line_hh])
+                    else:
+                        for k in range(1,len(data2[0]) - 1):
+                            data3 = data2[0][k]
+                            xh, yh = zip(*data3)
+                            line_h, = ax.plot(xh, yh, 'go--', ms=3)
+                            new_line.append(line_h)
+                            
+            return [line] + new_line
 
         anim = FuncAnimation(fig, animate, frames=self.num_iterate + 1, interval=800, blit=True)
 
         return anim
         # 0,100;100,200;150,50;300,100
         # 0,100;100,200;300,100
+    
+    def draw_animate_bruteforce(self, fig, ax):
+        ctrl_x, ctrl_y = zip(*self.control_points)
+        
+        line, = ax.plot([], [], 'bo-', label='Bezier Curve', ms=3)
+        
+        helper_lines = []
+        for i in range(len(self.control_points) - 1):
+            line2, = ax.plot([], [], 'go--', ms=2.5)
+            helper_lines.append(line2)
+        ax.plot(ctrl_x, ctrl_y, 'ro-', label='Control Points')
+        
+        delta_x = abs(max(ctrl_x) // 10) if max(ctrl_x) != 0 else min(ctrl_x) // 10
+        delta_y = abs(max(ctrl_y) // 10) if max(ctrl_y) != 0 else min(ctrl_y) // 10
+        
+        ax.set_xlim(min(ctrl_x) - (delta_x if delta_x != 0 else 5), max(ctrl_x) + (delta_x if delta_x != 0 else 5))
+        ax.set_ylim(min(ctrl_y) - (delta_y if delta_y != 0 else 5), max(ctrl_y) + (delta_y if delta_y != 0 else 5))
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_title('Bezier Curve Animation')
+        ax.legend()
+        ax.grid(True)
+        
+        # gap = 1
+        
+        # if self.num_points >= 100:
+        #     gap = self.num_points // 100
+        
+        def animate(i):
+            last_index = i + 1
+            # if last_index >= len(self.bezier_points):
+            #     last_index = -1
+            line.set_data(*zip(*self.bezier_points[:last_index]))
+            
+            data_helper = self.data_bruteforce[i]
+            for j in range(len(helper_lines)):
+                help_x, help_y = zip(*data_helper[j])
+                
+                helper_lines[j].set_data(help_x, help_y)
+            
+            
+            return [line] + helper_lines
+
+        anim = FuncAnimation(fig, animate, frames=self.num_points, interval=600/self.num_points, blit=True)
+
+        return anim
         
     def draw(self, ax):
         ctrl_x, ctrl_y = zip(*self.control_points)
         x, y = zip(*self.bezier_points)
     
-        ax.plot(x, y, 'bo-', label='Bezier Curve', ms = 3.5)
+        ax.plot(x, y, 'bo-', label='Bezier Curve', ms = 3)
         ax.plot(ctrl_x, ctrl_y, 'ro-', label='Control Points')        
     
     
