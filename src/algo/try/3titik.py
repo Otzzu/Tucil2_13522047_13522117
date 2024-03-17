@@ -1,3 +1,4 @@
+import timeit
 
 class BenzierCurve:
     def __init__(self, contol_points, num_iterate):
@@ -24,18 +25,22 @@ class BenzierCurve:
             self.calculate_bezier_points(midPoint3, midPoint2, point3, currIterations)
     
     def calc(self):
+        start = timeit.default_timer()
         self.benzier_points.append(self.control_points[0])
         self.calculate_bezier_points(self.control_points[0], self.control_points[1], self.control_points[2], 0)
         self.benzier_points.append(self.control_points[2])
+        end = timeit.default_timer()
+        print(f"Time:  {(end - start):.5f}")
+
         
 
 def main():
     control_points = [(0, 100), (100, 200) , (300, 100)]
-    num_iterate = 3
+    num_iterate = 25
     b = BenzierCurve(control_points, num_iterate)
     b.calc()
     
-    print(b.benzier_points)
+    # print(b.benzier_points)
     
 main()
     

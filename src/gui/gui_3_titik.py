@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from bezier2 import BezierCurve
+from algo.bezier_3_titik import BezierCurve3
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from tkinter import messagebox
@@ -10,13 +10,13 @@ anim = None
 canvas = None
 canvas2 = None
 
-def draw_bezier_curve_animation(control_points, num_iterate, canvas, canvas2, figure, ax, animate, ax2):
+def draw_bezier_curve_dnc(control_points, num_iterate, canvas, canvas2, figure, ax, animate, ax2):
     if animate != None:
         animate.event_source.stop()
     ax.clear()
     ax2.clear()
-    bezier_curve = BezierCurve(control_points, num_iterate)
-    bezier_curve.calc()
+    bezier_curve = BezierCurve3(control_points, num_iterate)
+    bezier_curve.calc_dnc()
 
     anim = bezier_curve.draw_animate(figure, ax)
     bezier_curve.draw(ax2)
@@ -24,6 +24,19 @@ def draw_bezier_curve_animation(control_points, num_iterate, canvas, canvas2, fi
     canvas2.draw()
     return anim, canvas, canvas2, bezier_curve
 
+def draw_bezier_curve_bruteforce(control_points, num_iterate, canvas, canvas2, figure, ax, animate, ax2):
+    if animate != None:
+        animate.event_source.stop()
+    ax.clear()
+    ax2.clear()
+    bezier_curve = BezierCurve3(control_points, num_iterate)
+    bezier_curve.calc_bruteforce()
+
+    anim = bezier_curve.draw_animate(figure, ax)
+    bezier_curve.draw(ax2)
+    canvas.draw()
+    canvas2.draw()
+    return anim, canvas, canvas2, bezier_curve
 
 def main():
     root = tk.Tk()
@@ -38,16 +51,16 @@ def main():
 
     # Input fields for control points
     for i in range(3):
-        ttk.Label(input_frame, text=f"Control Point {i+1} (x,y):").grid(column=0, row=i, sticky="w")
-        ttk.Entry(input_frame, textvariable=cp_vars[i], width=20).grid(column=1, row=i, sticky="ew")
+        ttk.Label(input_frame, text=f"Control Point {i+1} (x,y):", font=("Arial", 14)).grid(column=0, row=i, sticky="w")
+        ttk.Entry(input_frame, textvariable=cp_vars[i], width=20, font=("Arial", 14)).grid(column=1, row=i, sticky="ew")
 
     # Number of Iterations input
     num_iterate_var = tk.IntVar()
-    ttk.Label(input_frame, text="Number of Iterations").grid(column=0, row=3, sticky="w")
-    ttk.Entry(input_frame, textvariable=num_iterate_var, width=20).grid(column=1, row=3, sticky="ew")
+    ttk.Label(input_frame, text="Number of Iterations", font=("Arial", 14)).grid(column=0, row=3, sticky="w")
+    ttk.Entry(input_frame, textvariable=num_iterate_var, width=20, font=("Arial", 14)).grid(column=1, row=3, sticky="ew")
 
-    execution_time_label = ttk.Label(input_frame, text="")
-    execution_time_label.grid(column=1, row=3, sticky="ew")
+    execution_time_label = ttk.Label(input_frame, text="", font=("Arial", 14))
+    execution_time_label.grid(column=1, row=7, sticky="ew")
 
     # Frame for the plot
     main_frame = ttk.Frame(root)
@@ -61,12 +74,12 @@ def main():
     plot_frame2.grid(row=0, column=0, padx=10, pady=10)
     
     
-    figure, ax = plt.subplots(figsize=(8, 6))
+    figure, ax = plt.subplots(figsize=(7,4))
     global canvas
     canvas = FigureCanvasTkAgg(figure, plot_frame)
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
     
-    figure2, ax2 = plt.subplots(figsize=(8, 6))
+    figure2, ax2 = plt.subplots(figsize=(7,4))
     global canvas2
     canvas2 = FigureCanvasTkAgg(figure2, plot_frame2)
     canvas2.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -95,7 +108,7 @@ def main():
             return None, False
 
     # Function to handle drawing the curve
-    def handle_draw():
+    def handle_draw_dnc():
         control_points, is_control_points_valid = validate_control_points(cp_vars)
         if not is_control_points_valid:
             messagebox.showerror("Error", "Invalid input format for control points.")
@@ -105,8 +118,21 @@ def main():
             messagebox.showerror("Error", "Invalid input format for num iterate.")
             return
         global anim, canvas, canvas2
-        anim, canvas, canvas2, bezier_curve = draw_bezier_curve_animation(control_points, num_iterate, canvas, canvas2, figure, ax, anim, ax2)
-        execution_time_label.config(text=f"Time Execution: {bezier_curve.time_execution:.5f} seconds")
+        anim, canvas, canvas2, bezier_curve = draw_bezier_curve_dnc(control_points, num_iterate, canvas, canvas2, figure, ax, anim, ax2)
+        execution_time_label.config(text=f"Time Execution DnC: {bezier_curve.time_execution:.5f} seconds")
+    
+    def handle_draw_bruteforce():
+        control_points, is_control_points_valid = validate_control_points(cp_vars)
+        if not is_control_points_valid:
+            messagebox.showerror("Error", "Invalid input format for control points.")
+            return
+        num_iterate, is_num_iterate_valid = validate_num_iterate(num_iterate_var)
+        if not is_num_iterate_valid:
+            messagebox.showerror("Error", "Invalid input format for num iterate.")
+            return
+        global anim, canvas, canvas2
+        anim, canvas, canvas2, bezier_curve = draw_bezier_curve_bruteforce(control_points, num_iterate, canvas, canvas2, figure, ax, anim, ax2)
+        execution_time_label.config(text=f"Time Execution Bruteforce: {bezier_curve.time_execution:.5f} seconds")
     
     def clear_all():
         cp_vars[0].set("")
@@ -130,17 +156,20 @@ def main():
     style.configure('TButton', font=('Arial', 14, 'bold'))
 
     # Button to draw the curve
-    draw_button = ttk.Button(input_frame, text="Draw Curve", command=handle_draw, style='TButton')
-    draw_button.grid(column=1, row=2, sticky="ew")
+    draw_button_dnc = ttk.Button(input_frame, text="Draw Curve With DnC", command=handle_draw_dnc, style='TButton')
+    draw_button_dnc.grid(column=1, row=4, sticky="ew")
+    
+    draw_button_bruteforce = ttk.Button(input_frame, text="Draw Curve With Bruteforce", command=handle_draw_bruteforce, style='TButton')
+    draw_button_bruteforce.grid(column=1, row=5, sticky="ew")
     
     clear_button = ttk.Button(input_frame, text="Clear", command=clear_all, style='TButton')
-    clear_button.grid(column=1, row=3, sticky="ew", pady=5)
+    clear_button.grid(column=1, row=6, sticky="ew", pady=5)
     
     def on_close():
         global anim
         if anim is not None:
             anim.event_source.stop()
-        
+      
         plt.close('all')
         root.destroy()
 

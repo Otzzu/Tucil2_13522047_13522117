@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from bezier import BezierCurve
+from algo.bezier_n_titik import BezierCurveN
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from tkinter import messagebox
@@ -9,13 +9,13 @@ anim = None
 canvas = None
 canvas2 = None
 
-def draw_bezier_curve(control_points, num_iterate, canvas, canvas2, figure, ax, animate, ax2):
+def draw_bezier_curve_dnc(control_points, num_iterate, canvas, canvas2, figure, ax, animate, ax2):
     if animate != None:
         animate.event_source.stop()
     ax.clear()
     ax2.clear()
-    bezier_curve = BezierCurve(control_points, num_iterate)
-    bezier_curve.calc()
+    bezier_curve = BezierCurveN(control_points, num_iterate)
+    bezier_curve.calc_dnc()
 
     anim = bezier_curve.draw_animate(figure, ax)
     bezier_curve.draw(ax2)
@@ -23,6 +23,20 @@ def draw_bezier_curve(control_points, num_iterate, canvas, canvas2, figure, ax, 
     canvas2.draw()
     return anim, canvas, canvas2, bezier_curve
 
+def draw_bezier_curve_bruteforce(control_points, num_iterate, canvas, canvas2, figure, ax, animate, ax2):
+    if animate != None:
+        animate.event_source.stop()
+    ax.clear()
+    ax2.clear()
+    
+    bezier_curve = BezierCurveN(control_points, num_iterate)
+    bezier_curve.calc_bruteforce()
+
+    anim = bezier_curve.draw_animate(figure, ax)
+    bezier_curve.draw(ax2)
+    canvas.draw()
+    canvas2.draw()
+    return anim, canvas, canvas2, bezier_curve
 
 def main():
     
@@ -47,7 +61,7 @@ def main():
     num_iterate_entry.grid(column=1, row=1, sticky="ew")
     
     execution_time_label = ttk.Label(input_frame, text="", font=("Arial", 14))
-    execution_time_label.grid(column=1, row=4, sticky="ew")
+    execution_time_label.grid(column=1, row=5, sticky="ew")
 
     # Frame for the plot
     main_frame = ttk.Frame(root)
@@ -61,12 +75,12 @@ def main():
     plot_frame2.grid(row=0, column=0, padx=10, pady=10)
     
     
-    figure, ax = plt.subplots(figsize=(8, 6))
+    figure, ax = plt.subplots(figsize=(7,4))
     global canvas
     canvas = FigureCanvasTkAgg(figure, plot_frame)
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
     
-    figure2, ax2 = plt.subplots(figsize=(8, 6))
+    figure2, ax2 = plt.subplots(figsize=(7,4))
     global canvas2
     canvas2 = FigureCanvasTkAgg(figure2, plot_frame2)
     canvas2.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -100,7 +114,7 @@ def main():
         
 
     # Function to handle drawing the curve
-    def handle_draw():
+    def handle_draw_dnc():
         control_points, is_control_points_valid = parse_and_validate_control_points(control_points_var)
         if not is_control_points_valid:
             messagebox.showerror("Error", "Invalid input format for control points.")
@@ -110,8 +124,21 @@ def main():
             messagebox.showerror("Error", "Invalid input format for num iterate.")
             return
         global anim, canvas, canvas2
-        anim, canvas, canvas2, bezier_curve = draw_bezier_curve(control_points, num_iterate, canvas, canvas2, figure, ax, anim, ax2)
-        execution_time_label.config(text=f"Time Execution: {bezier_curve.time_execution:.5f} seconds")
+        anim, canvas, canvas2, bezier_curve = draw_bezier_curve_dnc(control_points, num_iterate, canvas, canvas2, figure, ax, anim, ax2)
+        execution_time_label.config(text=f"Time Execution DnC: {bezier_curve.time_execution:.5f} seconds")
+    
+    def handle_draw_bruteforce():
+        control_points, is_control_points_valid = parse_and_validate_control_points(control_points_var)
+        if not is_control_points_valid:
+            messagebox.showerror("Error", "Invalid input format for control points.")
+            return
+        num_iterate, is_num_iterate_valid = validate_num_iterate(num_iterate_var)
+        if not is_num_iterate_valid:
+            messagebox.showerror("Error", "Invalid input format for num iterate.")
+            return
+        global anim, canvas, canvas2
+        anim, canvas, canvas2, bezier_curve = draw_bezier_curve_bruteforce(control_points, num_iterate, canvas, canvas2, figure, ax, anim, ax2)
+        execution_time_label.config(text=f"Time Execution Bruteforce: {bezier_curve.time_execution:.5f} seconds")
 
     def clear_all():
         control_points_var.set("")
@@ -133,17 +160,21 @@ def main():
     style.configure('TButton', font=('Arial', 14, 'bold'))
 
     # Button to draw the curve
-    draw_button = ttk.Button(input_frame, text="Draw Curve With DnC", command=handle_draw, style='TButton')
-    draw_button.grid(column=1, row=2, sticky="ew")
+    draw_button_dnc = ttk.Button(input_frame, text="Draw Curve With DnC", command=handle_draw_dnc, style='TButton')
+    draw_button_dnc.grid(column=1, row=2, sticky="ew")
+    
+    draw_button_bruteforce = ttk.Button(input_frame, text="Draw Curve With Bruteforce", command=handle_draw_bruteforce, style='TButton')
+    draw_button_bruteforce.grid(column=1, row=3, sticky="ew")
     
     clear_button = ttk.Button(input_frame, text="Clear", command=clear_all, style='TButton')
-    clear_button.grid(column=1, row=3, sticky="ew", pady=5)
+    clear_button.grid(column=1, row=4, sticky="ew", pady=5)
 
 
     def on_close():
         global anim
         if anim is not None:
             anim.event_source.stop()
+
         
         plt.close('all')
         root.destroy()
@@ -154,5 +185,4 @@ def main():
     root.mainloop()
 
 
-if __name__ == "__main__":
-    main()
+

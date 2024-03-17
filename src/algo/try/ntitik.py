@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+import timeit
 
 class BezierCurve:
     def __init__(self, control_points, num_iterate):
@@ -32,24 +33,16 @@ class BezierCurve:
             
             self.calculate_bezier_points(left, current_iteration + 1)
             self.bezier_points.append(all[-1][0])
-            # self.all_helper_lines.append(all)
             self.calculate_bezier_points(right, current_iteration + 1)
-            
-            
-            # print("all")
-            # print(len(all))
-            # print(left)
-            # print(right)
-
-            
-            
     
     def calc(self):
+        start = timeit.default_timer()
+        
         self.bezier_points.append(self.control_points[0])
-        # self.all_helper_lines.append([self.control_points])
         self.calculate_bezier_points(self.control_points, 0)
         self.bezier_points.append(self.control_points[-1])
-        # self.all_helper_lines.append([self.control_points])
+        end = timeit.default_timer()
+        print(f"Time:  {(end - start):.5f}")
     
     def draw(self):
         ctrl_x, ctrl_y = zip(*self.control_points)
@@ -98,16 +91,14 @@ class BezierCurve:
 
 def main():
     # This can now be any number of control points
-    control_points = [(0, 100), (100, 200) , (300, 100)]
-    # control_points = [(0, 100), (100, 200), (150, 50) , (300, 100), (500, 650), (200, 500), (500, 100)]
+    # control_points = [(0, 100), (100, 200) , (300, 100)]
+    control_points = [(0, 100), (100, 200), (150, 50) , (300, 100), (500, 650), (200, 500), (500, 100)]
     num_iterate = 3
     bezier_curve = BezierCurve(control_points, num_iterate)
     bezier_curve.calc()
     
-    # print("res")
     print(bezier_curve.bezier_points)
-    print(len(bezier_curve.bezier_points))
     
-    bezier_curve.draw()
+    # bezier_curve.draw()
 
 main()
