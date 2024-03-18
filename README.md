@@ -48,24 +48,24 @@ Untuk menjalankan program ini, diperlukan beberapa prasyarat:
 Langkah-langkah instalasi projek ini:
 
 1. Clone repository :
-```shell
-git clone https://github.com/Otzzu/tucil-2-stima
-```
+    ```shell
+    git clone https://github.com/Otzzu/tucil-2-stima
+    ```
 
 2. Masuk ke source file :
-```shell
-cd  src
-```
+    ```shell
+    cd  src
+    ```
 
 3. Memilih menjalankan 3 titik kontrol atau n titik kontrol :
-n titik kontrol
-```shell
-python main_n.py
-```
-3 titik kontrol
-```shell
-python main_3.py
-```
+    - n titik kontrol
+        ```shell
+        python main_n.py
+        ```
+    - 3 titik kontrol
+        ```shell
+        python main_3.py
+        ```
 
 Maka, program sudah bias digunakan dengan masukan sesuai format yang dicontohkan
 
@@ -73,23 +73,23 @@ Maka, program sudah bias digunakan dengan masukan sesuai format yang dicontohkan
 
 Langkah-langkah dalam penggunaan program n titik kontrol:
 1. Memasukkan input titik kontrol
-<img src="img/n point input control point.png" alt="Input n titik kontrol" width="300" height="200"/>
+    <img src="img/n point input control point.png" alt="Input n titik kontrol" width="300" height="200"/>
 
 2. Memasukkan input jumlah iterasi
-<img src="img/n point input iterasi.png" alt="Input jumlah iterasi" width="300" height="200"/>
+    <img src="img/n point input iterasi.png" alt="Input jumlah iterasi" width="300" height="200"/>
 
 3. Memilih antara algoritma Divide and Conquer atau BruteForce
     - Divide and Conquer
-    <img src="img/n point dnc.png" alt="DNC n input" width="300" height="200"/>
+        <img src="img/n point dnc.png" alt="DNC n input" width="300" height="200"/>
     - BruteForce
-    <img src="img/n point bf.png" alt="BF n input" width="300" height="200"/>
+        <img src="img/n point bf.png" alt="BF n input" width="300" height="200"/>
 
 Hal serupa juga digunakan dalam langkah-langkah penggunaan program 3 titik kontrol:
 - Contoh penggunaan program 3 titik kontrol
     - Divide and Conqier
-    <img src="img/3 point dnc.png" alt="DNC 3 input" width="300" height="200"/>
+        <img src="img/3 point dnc.png" alt="DNC 3 input" width="300" height="200"/>
     - BruteForce
-    <img src="img/3 point bf.png" alt="BF 3 input" width="300" height="200"/>
+        <img src="img/3 point bf.png" alt="BF 3 input" width="300" height="200"/>
 
 ## Links
 
