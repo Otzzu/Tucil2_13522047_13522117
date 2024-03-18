@@ -42,6 +42,8 @@ Pada program ini, pengguna akan diminta untuk memberikan masukan berupa titik ko
 
 Untuk menjalankan program ini, diperlukan beberapa prasyarat:
 - `Python` : Python digunakan dalam semua bagian pembuatan program ini dan versi Python yang digunakan adalah versi 3
+- `Matplotlib` : Digunakan untuk menggambar kurva bezier yang terbentuk (perlu install dulu)
+- `Tkinter` : Digunakan untuk membuat tampilan GUI (tkinter biasanya sudah terinstall bersamaan dengan python)
 
 ## Installation
 
@@ -51,13 +53,18 @@ Langkah-langkah instalasi projek ini:
     ```shell
     git clone https://github.com/Otzzu/tucil-2-stima
     ```
+    
+2. Jika belum pernah menginstall matplotlib jalankan perintah berikut
+    ```shell
+    pip install matplotlib
+    ```
 
-2. Masuk ke source file :
+3. Masuk ke source file :
     ```shell
     cd  src
     ```
 
-3. Memilih menjalankan 3 titik kontrol atau n titik kontrol :
+4. Memilih menjalankan 3 titik kontrol atau n titik kontrol :
     - n titik kontrol
         ```shell
         python main_n.py
