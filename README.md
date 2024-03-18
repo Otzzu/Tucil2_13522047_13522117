@@ -79,16 +79,16 @@ Langkah-langkah dalam penggunaan program n titik kontrol:
     <img src="img/n point input iterasi.png" alt="Input jumlah iterasi" width="300" height="200"/>
 
 3. Memilih antara algoritma Divide and Conquer atau BruteForce
-    - Divide and Conquer
+    - Divide and Conquer <br>
         <img src="img/n point dnc.png" alt="DNC n input" width="300" height="200"/>
-    - BruteForce
+    - BruteForce <br>
         <img src="img/n point bf.png" alt="BF n input" width="300" height="200"/>
 
 Hal serupa juga digunakan dalam langkah-langkah penggunaan program 3 titik kontrol:
 - Contoh penggunaan program 3 titik kontrol
-    - Divide and Conqier
+    - Divide and Conqier <br>
         <img src="img/3 point dnc.png" alt="DNC 3 input" width="300" height="200"/>
-    - BruteForce
+    - BruteForce <br>
         <img src="img/3 point bf.png" alt="BF 3 input" width="300" height="200"/>
 
 ## Links
