@@ -23,8 +23,9 @@ Anggota Tim :
 Tujuan pembuatan projek ini:
 - Mengimplementasikan algoritma Divide and Conquer dalam pembuatan Kurva Bézier
 - Mengimplementasikan algoritma BruteForce dalam pembuatan Kurva Bézier
-- Membuat program pembuatan Kurva Bézier dengan n titik kontrol
+- Membuat program pembuatan Kurva Bézier dengan 3 atau lebih titik kontrol
 - Membuat interface pengguna yang menerima masukan pengguna
+- Menganalisis dan membandingkan kedua algoritma yang dibuat
 
 ## Abstraction
 
