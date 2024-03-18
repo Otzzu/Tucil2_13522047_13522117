@@ -42,12 +42,12 @@ class BezierCurveNPoints:
         print(f"Time:  {(end - start):.5f}")
         
 def main():
-    control_points = [(0, 100), (100, 200), (150, 50) , (300, 100), (500, 650), (200, 500), (500, 100)]
-    num_iterate = 3
+    control_points = [(0, 100), (100, 200) , (300, 100)]
+    num_iterate = 20
     b = BezierCurveNPoints(control_points, num_iterate)
     
     b.calc()
-    print(b.curve_points)
+    # print(b.curve_points)
     
 main()
  

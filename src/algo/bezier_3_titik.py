@@ -2,36 +2,41 @@ from matplotlib.animation import FuncAnimation
 import timeit
 
 class BezierCurve3:
+    #inisialisasi objek
     def __init__(self, control_points, num_iterate):
         self.control_points = control_points
         self.num_iterate = num_iterate
-        self.bezier_points = []
-        self.time_execution = 0
-        self.num_points=0
-        self.data_bruteforce=[]
-        self.data_dnc = [[] for _ in range(5)]
+        self.bezier_points = [] # titik-titik pada kurva (solusi)
+        self.time_execution = 0 # waktu eksekusi algoritma murni
+        self.num_points=0  # banyak titik di kurva pada suatu iterasi
+        self.data_bruteforce=[] # data bruteforce untuk membuat animasi
+        self.data_dnc = [[] for _ in range(5)] # data dnc untuk membuat animasi
         
-
-    def midPoint(self,point1, point2):
+    # fungsi untuk menghitung titik tengah diantara dua buah titik
+    def mid_point(self,point1, point2):
         mid_x = (point1[0] + point2[0]) / 2
         mid_y = (point1[1] + point2[1]) / 2
 
         return mid_x, mid_y
 
+    # fungsi rekursif untuk menghitung titik-titik pada kurva bezier dengan pendekatan dnc
     def calculate_bezier_points_dnc(self,point1, point2, point3, currIterations):
         if (currIterations < self.num_iterate):
-            midPoint1 = self.midPoint(point1, point2)
-            midPoint2 = self.midPoint(point2, point3)
-            midPoint3 = self.midPoint(midPoint1, midPoint2)
+            # tahap conquer
+            midPoint1 = self.mid_point(point1, point2)
+            midPoint2 = self.mid_point(point2, point3)
+            midPoint3 = self.mid_point(midPoint1, midPoint2)
 
             if currIterations < 5:
                 self.data_dnc[currIterations].extend([midPoint1, midPoint2])
             currIterations = currIterations + 1
 
+            #tahap divide, pemanggilan rekursif, dan penggabungan solusi
             self.calculate_bezier_points_dnc(point1, midPoint1, midPoint3, currIterations)
             self.bezier_points.append(midPoint3)
             self.calculate_bezier_points_dnc(midPoint3, midPoint2, point3, currIterations)
     
+    # fungsi yang menjadi entry point untuk pemanggilan fungsi rekursif dnc
     def calc_dnc(self):
         start_time = timeit.default_timer()
         self.bezier_points.append(self.control_points[0])
@@ -39,7 +44,8 @@ class BezierCurve3:
         self.bezier_points.append(self.control_points[2])
         end_time = timeit.default_timer()
         self.time_execution = end_time - start_time
-        
+
+    # fungsi untuk menghitug berapa banyak titik yang akan dicari pada suatu iterasi
     def count_points(self):
         count=3
         for _ in range (1,self.num_iterate):
@@ -50,11 +56,13 @@ class BezierCurve3:
         
         return count
 
+    # fungsi untuk menghitung titik-titik pada kurva bezier secara bruteforce
     def calculate_bezier_points_bruteforce(self, num_points):
         curve_points = []
         
         for t in range(num_points):
             t /= num_points - 1
+            
             # persamaan bertahap
             x1 = (1-t) * self.control_points[0][0] + t* self.control_points[1][0]
             y1 = (1-t) * self.control_points[0][1] + t* self.control_points[1][1]
@@ -72,6 +80,7 @@ class BezierCurve3:
             
         self.bezier_points = curve_points.copy()
 
+    # fungsi yang menjadi entry points untuk melakukan pembentukan kurva bezier secara bruteforce
     def calc_bruteforce(self):
         start_time = timeit.default_timer()
         self.num_points=self.count_points()
@@ -79,6 +88,7 @@ class BezierCurve3:
         end_time = timeit.default_timer()
         self.time_execution = end_time-start_time
     
+    # fungsi untuk menggambar animasi pembentukan kurva secara dnc
     def draw_animate(self, fig, ax):
         ctrl_x, ctrl_y = zip(*self.control_points)
         
@@ -132,9 +142,8 @@ class BezierCurve3:
         anim = FuncAnimation(fig, animate, frames=self.num_iterate + 1, interval=800, blit=True)
 
         return anim
-        # 0,100;100,200;150,50;300,100
-        # 0,100;100,200;300,100
     
+    # fungsi untuk membuat animasi pembentukan kurva secara bruteforce
     def draw_animate_bruteforce(self, fig, ax):
         ctrl_x, ctrl_y = zip(*self.control_points)
         

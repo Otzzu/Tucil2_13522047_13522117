@@ -2,25 +2,30 @@ from matplotlib.animation import FuncAnimation
 import timeit
 
 class BezierCurveN:
+    #inisialisasi objek
     def __init__(self, control_points, num_iterate):
-        self.control_points = control_points
+        self.control_points = control_points 
         self.num_iterate = num_iterate
-        self.bezier_points = []
-        self.time_execution = 0
-        self.num_points = 0
-        self.data_bruteforce=[]
-        self.data_dnc = [[] for _ in range(5)]
+        self.bezier_points = [] # titik-titik pada kurva (solusi)
+        self.time_execution = 0 # waktu eksekusi algoritma murni
+        self.num_points = 0 # banyak titik di kurva pada suatu iterasi
+        self.data_bruteforce=[] # data bruteforce untuk membuat animasi
+        self.data_dnc = [[] for _ in range(5)] # data dnc untuk membuat animasi
 
+    # fungsi untuk menghitung titik tengah diantara dua buah titik
     def mid_point(self, point1, point2):
         mid_x = (point1[0] + point2[0]) / 2
         mid_y = (point1[1] + point2[1]) / 2
         return mid_x, mid_y
 
+    # fungsi rekursif untuk menghitung titik-titik pada kurva bezier dengan pendekatan dnc
     def calculate_bezier_points_dnc(self, points, current_iteration):
         if current_iteration < self.num_iterate:
-            all = []
-            
+            # tahap conquer
+            all = [] # menyimpan semua data titik tengah yang didapatkan
             all.append(points)
+            
+            # pencarian titik tengah yang berada pada garis terakhir yang dibentuk
             for j in range(0, len(points) - 1):
                 mid_points = []
                 for i in range(0, len(all[j]) - 1):
@@ -29,18 +34,20 @@ class BezierCurveN:
                 
                 all.append(mid_points)
             
+            #tahap divide
             left = [all[i][0] for i in range(len(all))]
             right = [all[len(all) - i - 1][-1] for i in range(len(all))]
             
+            # penyimpanan data untuk mempermudah pembuatan animasi
             if current_iteration + 1 < 5:
                 self.data_dnc[current_iteration + 1].append(all)
             
-            
+            # pemanggilan rekursif dan penggabungan solusi
             self.calculate_bezier_points_dnc(left, current_iteration + 1)
             self.bezier_points.append(all[-1][0])
             self.calculate_bezier_points_dnc(right, current_iteration + 1)
-             
-    #0,0;1,8;5,0;8,10;14,0;20,15;25,20;35,30;20,4;10,0
+            
+    # fungsi yang menjadi entry point untuk pemanggilan fungsi rekursif dnc
     def calc_dnc(self):
         start_time = timeit.default_timer()
         self.bezier_points.append(self.control_points[0])
@@ -48,7 +55,8 @@ class BezierCurveN:
         self.bezier_points.append(self.control_points[-1])
         end_time = timeit.default_timer()
         self.time_execution = end_time - start_time
-        
+    
+    # fungsi untuk menghitug berapa banyak titik yang akan dicari pada suatu iterasi
     def count_points(self):
         count=3
         for _ in range (1,self.num_iterate):
@@ -58,7 +66,8 @@ class BezierCurveN:
             count = 2
         
         return count
-
+    
+    # fungsi untuk menghitung titik-titik pada kurva bezier secara bruteforce
     def calculate_bezier_points_bruteforce(self, num_points):
         curve_points = []
         
@@ -69,6 +78,7 @@ class BezierCurveN:
             for i in range(len(self.control_points) - 1):
                 value = []
                 for j in range(len(data[i]) - 1):
+                    # menggunakan persamaan dua titik
                     x = (1-t) * data[i][j][0] + t *data[i][j+1][0]
                     y = (1-t) * data[i][j][1] + t *data[i][j+1][1]
                     value.append((x, y))
@@ -79,6 +89,7 @@ class BezierCurveN:
             
         self.bezier_points = curve_points.copy()
 
+    # fungsi yang menjadi entry points untuk melakukan pembentukan kurva bezier secara bruteforce
     def calc_bruteforce(self):
         start_time = timeit.default_timer()
         self.num_points=self.count_points()
@@ -86,7 +97,7 @@ class BezierCurveN:
         end_time = timeit.default_timer()
         self.time_execution = end_time - start_time
         
-    
+    # fungsi untuk menggambar animasi pembentukan kurva secara dnc
     def draw_animate(self, fig, ax):
         ctrl_x, ctrl_y = zip(*self.control_points)
         
@@ -107,7 +118,6 @@ class BezierCurveN:
         ax.grid(True)
         
         def animate(i):
-            # print(i)
             length = len(self.bezier_points)
             gap = length - 1
             for j in range(i):
@@ -117,7 +127,6 @@ class BezierCurveN:
             
             if (gap != 1):
                 for j in range((length // gap) + 1):
-                    # print(j*gap)
                     data.append(self.bezier_points[j * gap])
             else:
                 data = self.bezier_points.copy()
@@ -152,9 +161,8 @@ class BezierCurveN:
         anim = FuncAnimation(fig, animate, frames=self.num_iterate + 1, interval=800, blit=True)
 
         return anim
-        # 0,100;100,200;150,50;300,100
-        # 0,100;100,200;300,100
     
+    # fungsi untuk membuat animasi pembentukan kurva secara bruteforce
     def draw_animate_bruteforce(self, fig, ax):
         ctrl_x, ctrl_y = zip(*self.control_points)
         
@@ -177,15 +185,8 @@ class BezierCurveN:
         ax.legend()
         ax.grid(True)
         
-        # gap = 1
-        
-        # if self.num_points >= 100:
-        #     gap = self.num_points // 100
-        
         def animate(i):
             last_index = i + 1
-            # if last_index >= len(self.bezier_points):
-            #     last_index = -1
             line.set_data(*zip(*self.bezier_points[:last_index]))
             
             data_helper = self.data_bruteforce[i]
@@ -200,7 +201,8 @@ class BezierCurveN:
         anim = FuncAnimation(fig, animate, frames=self.num_points, interval=600/self.num_points, blit=True)
 
         return anim
-        
+    
+    # fungsi untuk menggambar kurva tanpa animasi (gambar statik)
     def draw(self, ax):
         ctrl_x, ctrl_y = zip(*self.control_points)
         x, y = zip(*self.bezier_points)
@@ -219,20 +221,3 @@ class BezierCurveN:
         ax.set_title('Bezier Curve')
         ax.legend()
         ax.grid(True)
-        
-        
-
-# def main():
-#     # This can now be any number of control points
-#     control_points = [(0, 100), (100, 200), (150, 50) , (300, 100)]
-#     # control_points = [(0, 100), (100, 200), (150, 50) , (300, 100), (500, 650), (200, 500), (500, 100)]
-#     num_iterate = 10
-#     bezier_curve = BezierCurveN(control_points, num_iterate)
-#     bezier_curve.calc()
-    
-#     # print("res")
-#     # print(bezier_curve.bezier_points)
-    
-#     bezier_curve.draw()
-
-# main()

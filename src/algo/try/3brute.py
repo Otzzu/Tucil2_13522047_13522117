@@ -15,7 +15,6 @@ class BezierCurveNPoints:
         return count
 
     def _quadratic_bezier_curve(self, num_points):
-        start = timeit.default_timer()
         curve_points = []
         
         for t in range(num_points):
@@ -24,8 +23,6 @@ class BezierCurveNPoints:
             y = (1 - t)**2 * self.points[0][1] + 2 * (1 - t) * t * self.points[1][1] + t**2 * self.points[2][1]
             curve_points.append((x, y))
             
-        end = timeit.default_timer()
-        print(f"Time:  {(end - start):.5f}")
         return curve_points
 
     def calc(self):
@@ -37,7 +34,7 @@ class BezierCurveNPoints:
         
 def main():
     control_points = [(0, 100), (100, 200) , (300, 100)]
-    num_iterate = 25
+    num_iterate = 20
     b = BezierCurveNPoints(control_points, num_iterate)
     b.calc()
     

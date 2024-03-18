@@ -92,12 +92,12 @@ class BezierCurve:
 def main():
     # This can now be any number of control points
     # control_points = [(0, 100), (100, 200) , (300, 100)]
-    control_points = [(0, 100), (100, 200), (150, 50) , (300, 100), (500, 650), (200, 500), (500, 100)]
-    num_iterate = 3
+    control_points = [(0, 100), (100, 200) , (300, 100)]
+    num_iterate = 20
     bezier_curve = BezierCurve(control_points, num_iterate)
     bezier_curve.calc()
     
-    print(bezier_curve.bezier_points)
+    # print(bezier_curve.bezier_points)
     
     # bezier_curve.draw()
 

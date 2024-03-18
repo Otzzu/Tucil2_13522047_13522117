@@ -36,7 +36,7 @@ class BenzierCurve:
 
 def main():
     control_points = [(0, 100), (100, 200) , (300, 100)]
-    num_iterate = 25
+    num_iterate = 20
     b = BenzierCurve(control_points, num_iterate)
     b.calc()
     
