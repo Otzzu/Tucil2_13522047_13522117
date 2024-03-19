@@ -1,8 +1,6 @@
 from gui.gui_n_titik import main
 
+# main untuk menjalankan pogram yang memanggil fungsi main pada gui n titil
 if __name__ == "__main__":
     main()
     
-#0,0;1,8;5,0;8,10;14,0;20,15;25,20;35,30;20,4;10,0
-#0,100;100,200;150,50;300,100
-#0,100;100,200;300,100

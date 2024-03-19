@@ -19,7 +19,7 @@ class BezierCurve:
             all = []
             
             all.append(points)
-            for j in range(0, len(points) - 1):
+            for j in range(len(points) - 1):
                 mid_points = []
                 for i in range(0, len(all[j]) - 1):
                     mid_point = self.mid_point(all[j][i], all[j][i+1])
@@ -92,7 +92,7 @@ class BezierCurve:
 def main():
     # This can now be any number of control points
     # control_points = [(0, 100), (100, 200) , (300, 100)]
-    control_points = [(0, 100), (100, 200) , (300, 100)]
+    control_points = [(0, 100), (100, 200) , (300, 100), (500,100), (700,800)]
     num_iterate = 20
     bezier_curve = BezierCurve(control_points, num_iterate)
     bezier_curve.calc()

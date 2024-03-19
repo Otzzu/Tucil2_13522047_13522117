@@ -47,12 +47,7 @@ class BezierCurve3:
 
     # fungsi untuk menghitug berapa banyak titik yang akan dicari pada suatu iterasi
     def count_points(self):
-        count=3
-        for _ in range (1,self.num_iterate):
-            count= count*2-1
-        
-        if self.num_iterate == 0:
-            count = 2
+        count = 2 ** self.num_iterate + 1
         
         return count
 
@@ -60,7 +55,7 @@ class BezierCurve3:
     def calculate_bezier_points_bruteforce(self, num_points):
         curve_points = []
         
-        for t in range(num_points):
+        for t in range(1, num_points - 1):
             t /= num_points - 1
             
             # persamaan bertahap
@@ -85,13 +80,14 @@ class BezierCurve3:
         start_time = timeit.default_timer()
         self.num_points=self.count_points()
         self.calculate_bezier_points_bruteforce(self.num_points)
+        self.bezier_points.append(self.control_points[-1])
+        self.bezier_points.insert(0, self.control_points[0])
         end_time = timeit.default_timer()
         self.time_execution = end_time-start_time
     
     # fungsi untuk menggambar animasi pembentukan kurva secara dnc
     def draw_animate(self, fig, ax):
-        ctrl_x, ctrl_y = zip(*self.control_points)
-        
+        ctrl_x, ctrl_y = zip(*self.control_points)        
         x, y = zip(*[self.control_points[0], self.control_points[-1]])
 
         line, = ax.plot(x, y, 'bo-', label='Bezier Curve', ms=3)
@@ -162,21 +158,16 @@ class BezierCurve3:
         ax.legend()
         ax.grid(True)
         
-        # gap = 1
-        
-        # if self.num_points >= 100:
-        #     gap = self.num_points // 100
-        
         def animate(i):
             last_index = i + 1
-            # if last_index >= len(self.bezier_points):
-            #     last_index = -1
+
             line.set_data(*zip(*self.bezier_points[:last_index]))
             
-            help_x, help_y = zip(*self.data_bruteforce[i])
-            
-            line2.set_data(help_x, help_y)
-            
+            if (i != 0 and i != self.num_points -1 ):
+                help_x, help_y = zip(*self.data_bruteforce[i-1])
+
+                line2.set_data(help_x, help_y)
+
             
             return [line, line2]
 
